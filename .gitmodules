@@ -1,0 +1,6 @@
+[submodule "osu-BMAPI"]
+	path = osu-BMAPI
+	url = https://github.com/smoogipoo/osu-BMAPI
+[submodule "Quaver.API"]
+	path = Quaver.API
+	url = https://github.com/Quaver/Quaver.API
