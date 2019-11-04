@@ -58,6 +58,12 @@
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="Quaver.API">
+      <HintPath>..\external\Quaver.API\Quaver.API\bin\Release\netstandard2.0\Quaver.API.dll</HintPath>
+    </Reference>
+    <Reference Include="YamlDotNet">
+      <HintPath>..\packages\YamlDotNet.8.0.0\lib\net45\YamlDotNet.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">
