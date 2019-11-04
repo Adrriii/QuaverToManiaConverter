@@ -16,7 +16,6 @@ namespace QuaverToManiaConverter
 			// Container child QuaverToManiaConverter.FileExplorer.Gtk.Container+ContainerChild
 			this.filechooserwidget1 = new global::Gtk.FileChooserWidget(((global::Gtk.FileChooserAction)(0)));
 			this.filechooserwidget1.Name = "filechooserwidget1";
-			this.filechooserwidget1.SelectMultiple = true;
 			this.Add(this.filechooserwidget1);
 			if ((this.Child != null))
 			{

@@ -151,7 +151,6 @@
     <child>
       <widget class="Gtk.FileChooserWidget" id="filechooserwidget1">
         <property name="MemberName" />
-        <property name="SelectMultiple">True</property>
         <signal name="FileActivated" handler="OnFilechooserwidget1FileActivated" />
       </widget>
     </child>

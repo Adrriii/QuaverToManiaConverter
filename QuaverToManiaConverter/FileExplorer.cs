@@ -19,7 +19,7 @@ namespace QuaverToManiaConverter
             this.Hide();
             foreach(string file in ((FileChooser)sender).Filenames)
             {
-                Console.WriteLine(file);
+                Convert.StartConvert(MainClass.win, file);
             }
             this.Destroy();
         }
