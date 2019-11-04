@@ -64,9 +64,6 @@
     <Reference Include="YamlDotNet">
       <HintPath>..\packages\YamlDotNet.8.0.0\lib\net45\YamlDotNet.dll</HintPath>
     </Reference>
-    <Reference Include="osu!BMAPI">
-      <HintPath>..\external\osu-BMAPI\obj\Debug\osu!BMAPI.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">

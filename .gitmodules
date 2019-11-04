@@ -1,6 +1,3 @@
 [submodule "external/Quaver.API"]
 	path = external/Quaver.API
 	url = https://github.com/Quaver/Quaver.API
-[submodule "external/osu-BMAPI"]
-	path = external/osu-BMAPI
-	url = https://github.com/smoogipoo/osu-BMAPI

@@ -5,8 +5,6 @@ using System.IO.Compression;
 using Gtk;
 using Quaver.API.Maps;
 using Quaver.API.Maps.Structures;
-using BMAPI.v1;
-using BMAPI.v1.HitObjects;
 
 namespace QuaverToManiaConverter
 {
@@ -27,6 +25,38 @@ namespace QuaverToManiaConverter
             CleanWorkingDirectory();
 
             List<Beatmap> beatmaps = QuasToBeatmaps(toConvert);
+
+            string dir_save = null;
+            do
+            {
+                if(dir_save != null)
+                {
+                    Alert("Please select a directory");
+                }
+
+                Gtk.FileChooserDialog filechooser =
+                    new Gtk.FileChooserDialog("Choose a folder to save the map",
+                        parent,
+                        FileChooserAction.CreateFolder,
+                        "Cancel", ResponseType.Cancel,
+                        "Chose", ResponseType.Accept);
+
+                if (filechooser.Run() == (int)ResponseType.Accept)
+                {
+                    dir_save = filechooser.Filename;
+                }
+                else
+                {
+                    return false;
+                }
+
+                filechooser.Destroy();
+            } while (!Directory.Exists(dir_save));
+
+            foreach(Beatmap b in beatmaps)
+            {
+                b.Save(dir_save + "/" + b.Filename);
+            }
 
             return true;
         }
