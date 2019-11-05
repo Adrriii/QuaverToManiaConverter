@@ -24,7 +24,7 @@ namespace QuaverToManiaConverter
 
             CleanWorkingDirectory();
 
-            List<Beatmap> beatmaps = QuasToBeatmaps(toConvert);
+            List<ManiaBeatmap> beatmaps = QuasToBeatmaps(toConvert);
 
             string dir_save = null;
             do
@@ -53,7 +53,7 @@ namespace QuaverToManiaConverter
                 filechooser.Destroy();
             } while (!Directory.Exists(dir_save));
 
-            foreach(Beatmap b in beatmaps)
+            foreach(ManiaBeatmap b in beatmaps)
             {
                 b.Save(dir_save + "/" + b.Filename);
             }
@@ -61,9 +61,9 @@ namespace QuaverToManiaConverter
             return true;
         }
 
-        public static List<Beatmap> QuasToBeatmaps(List<Qua> quas)
+        public static List<ManiaBeatmap> QuasToBeatmaps(List<Qua> quas)
         {
-            List<Beatmap> result = new List<Beatmap>();
+            List<ManiaBeatmap> result = new List<ManiaBeatmap>();
 
             foreach (Qua convert in quas)
             {
@@ -73,41 +73,23 @@ namespace QuaverToManiaConverter
             return result;
         }
 
-        public static Beatmap QuaToBeatmap(Qua qua)
+        public static ManiaBeatmap QuaToBeatmap(Qua qua)
         {
-            Beatmap beatmap = new Beatmap();
+            ManiaBeatmap beatmap = new ManiaBeatmap();
 
-            beatmap.ApproachRate = 5;
-            beatmap.Artist = qua.Artist;
-            beatmap.ArtistUnicode = qua.Artist;
-            beatmap.AudioFilename = qua.AudioFile;
-            beatmap.AudioHash = "";
-            beatmap.BeatmapHash = "";
-            beatmap.Bookmarks = new List<int>();
-            beatmap.CircleSize = qua.GetKeyCount();
-            beatmap.ComboColours = new List<BMAPI.v1.Combo>();
-            beatmap.Creator = qua.Creator;
-            beatmap.EditorBookmarks = new List<int>();
-            beatmap.Events = new List<BMAPI.v1.Events.EventBase>();
-            beatmap.Filename = $"{ qua.Title } - { qua.Artist } [{ qua.DifficultyName }] ({ qua.Creator }).osu";
-            beatmap.HitObjects = new List<BMAPI.v1.HitObjects.CircleObject>();
 
-            foreach(HitObjectInfo quaHit in qua.HitObjects)
+            foreach (HitObjectInfo quaHit in qua.HitObjects)
             {
                 beatmap.HitObjects.Add(QuaHitToManiaHit(quaHit, qua.GetKeyCount()));
             }
 
-            beatmap.HPDrainRate = 7;
-            beatmap.Mode = GameMode.Mania;
-            beatmap.OverallDifficulty = 7;
-            beatmap.SampleSet = "";
-            beatmap.SkinPreference = "";
-            beatmap.SliderBorder = new BMAPI.Colour();
-            beatmap.SliderMultiplier = 1;
-            beatmap.SliderTickRate = 1;
+
+            beatmap.Artist = qua.Artist;
+            beatmap.AudioFileName = qua.AudioFile;
+            beatmap.CircleSize = qua.GetKeyCount();
+            beatmap.Creator = qua.Creator;
             beatmap.Source = qua.Source;
-            beatmap.Tags = new List<string>();
-            beatmap.TimingPoints = new List<TimingPoint>();
+            beatmap.BackgroundFile = qua.BackgroundFile;
 
             foreach (TimingPointInfo quaTP in qua.TimingPoints)
             {
@@ -120,45 +102,26 @@ namespace QuaverToManiaConverter
             }
 
             beatmap.Title = qua.Title;
-            beatmap.TitleUnicode = qua.Title;
             beatmap.Version = qua.DifficultyName;
+            beatmap.PreviewTime = qua.SongPreviewTime;
+
+            beatmap.RefreshFilename();
 
             return beatmap;
         }
 
-        public static CircleObject QuaHitToManiaHit(HitObjectInfo quaHit, int keyMode)
+        public static HitObject QuaHitToManiaHit(HitObjectInfo quaHit, int keyMode)
         {
-            CircleObject maniaHit = new CircleObject();
-
-            switch(quaHit.HitSound)
-            {
-                case Quaver.API.Enums.HitSounds.Clap:
-                    maniaHit.Effect = EffectType.Clap;
-                    break;
-                case Quaver.API.Enums.HitSounds.Finish:
-                    maniaHit.Effect = EffectType.Finish;
-                    break;
-                case Quaver.API.Enums.HitSounds.Whistle:
-                    maniaHit.Effect = EffectType.Whistle;
-                    break;
-                default:
-                    maniaHit.Effect = EffectType.None;
-                    break;
-            }
-
+            HitObject maniaHit;
             int xfix = 512 / keyMode;
-            // xpos =  (512 / keys) * (column - 1) - (256 / keys)
-            maniaHit.Location = new BMAPI.Point2((quaHit.Lane - 1) * xfix - (xfix / 2), 192);
-            maniaHit.Radius = 0f;
-            maniaHit.StartTime = quaHit.StartTime;
 
-            if(quaHit.IsLongNote)
+            if (quaHit.IsLongNote)
             {
-                maniaHit.Type = HitObjectType.Slider;
+                maniaHit = new HitObject((quaHit.Lane) * xfix - (xfix / 2), quaHit.StartTime, true, quaHit.EndTime);
             }
             else
             {
-                maniaHit.Type = HitObjectType.Circle;
+                maniaHit = new HitObject((quaHit.Lane) * xfix - (xfix / 2), quaHit.StartTime);
             }
 
             return maniaHit;
@@ -166,40 +129,16 @@ namespace QuaverToManiaConverter
 
         public static TimingPoint QuaTPToManiaTP(TimingPointInfo quaTP)
         {
-            TimingPoint maniaTP = new TimingPoint();
 
-            maniaTP.BpmDelay = quaTP.MillisecondsPerBeat;
-            maniaTP.CustomSampleSet = 0;
-            maniaTP.InheritsBPM = false;
-            maniaTP.SampleSet = 0;
-            maniaTP.Time = quaTP.StartTime;
-            switch (quaTP.Signature)
-            {
-                case Quaver.API.Enums.TimeSignature.Triple:
-                    maniaTP.TimeSignature = 1;
-                    break;
-                default:
-                    maniaTP.TimeSignature = 0;
-                    break;
-            }
-            maniaTP.VisualOptions = TimingPointOptions.None;
-            maniaTP.VolumePercentage = 100;
+            TimingPoint maniaTP = new TimingPoint((int) quaTP.StartTime, quaTP.MillisecondsPerBeat);
 
             return maniaTP;
         }
 
         public static TimingPoint QuaSVToManiaTP(SliderVelocityInfo quaSV)
         {
-            TimingPoint maniaTP = new TimingPoint();
 
-            maniaTP.BpmDelay = -1000 / (quaSV.Multiplier * 10);
-            maniaTP.CustomSampleSet = 0;
-            maniaTP.InheritsBPM = true;
-            maniaTP.SampleSet = 0;
-            maniaTP.Time = quaSV.StartTime;
-            maniaTP.TimeSignature = 1;
-            maniaTP.VisualOptions = TimingPointOptions.None;
-            maniaTP.VolumePercentage = 100;
+            TimingPoint maniaTP = new TimingPoint((int)quaSV.StartTime, -1000 / (quaSV.Multiplier * 10));
 
             return maniaTP;
         }

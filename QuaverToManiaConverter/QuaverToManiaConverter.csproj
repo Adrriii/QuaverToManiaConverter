@@ -82,6 +82,7 @@
     <Compile Include="Convert.cs">
       <IncludeInPackage>false</IncludeInPackage>
     </Compile>
+    <Compile Include="ManiaBeatmap.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
