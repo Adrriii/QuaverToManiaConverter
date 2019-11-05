@@ -14,6 +14,7 @@ namespace QuaverToManiaConverter
         public string BackgroundFile;
         public string Source;
         public string Filename;
+        public int PreviewTime;
         public int CircleSize;
 
         public List<TimingPoint> TimingPoints;
@@ -46,7 +47,7 @@ namespace QuaverToManiaConverter
             writer.WriteLine("[General]");
             writer.WriteLine($"AudioFileName: { AudioFileName }");
             writer.WriteLine("AudioLeadIn: 0");
-            writer.WriteLine("PreviewTime: -1");
+            writer.WriteLine($"PreviewTime: { PreviewTime }");
             writer.WriteLine("Countdown: 0");
             writer.WriteLine("SampleSet: None");
             writer.WriteLine("StackLeniency: 1");

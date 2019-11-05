@@ -22,40 +22,24 @@ namespace QuaverToManiaConverter
 
             List<Qua> toConvert = GetQuaFromDirectory(destination);
 
-            CleanWorkingDirectory();
-
             List<ManiaBeatmap> beatmaps = QuasToBeatmaps(toConvert);
 
-            string dir_save = null;
-            do
-            {
-                if(dir_save != null)
-                {
-                    Alert("Please select a directory");
-                }
+            string dir_save = getOutputDirDialog(parent);
 
-                Gtk.FileChooserDialog filechooser =
-                    new Gtk.FileChooserDialog("Choose a folder to save the map",
-                        parent,
-                        FileChooserAction.CreateFolder,
-                        "Cancel", ResponseType.Cancel,
-                        "Chose", ResponseType.Accept);
-
-                if (filechooser.Run() == (int)ResponseType.Accept)
-                {
-                    dir_save = filechooser.Filename;
-                }
-                else
-                {
-                    return false;
-                }
-
-                filechooser.Destroy();
-            } while (!Directory.Exists(dir_save));
+            if (dir_save == "") return false;
 
             foreach(ManiaBeatmap b in beatmaps)
             {
-                b.Save(dir_save + "/" + b.Filename);
+                b.Save(destination + "/" + b.Filename);
+            }
+
+            try
+            {
+                packFiles(destination, dir_save, beatmaps[0]);
+            } catch(Exception e)
+            {
+                // no map to pack, or failed
+                return false;
             }
 
             return true;
@@ -205,6 +189,46 @@ namespace QuaverToManiaConverter
                message);
             alert.Run();
             alert.Destroy();
+        }
+
+        private static string getOutputDirDialog(Window parent)
+        {
+            string dir_save = null;
+            do
+            {
+                if (dir_save != null)
+                {
+                    Alert("Please select a directory");
+                }
+
+                Gtk.FileChooserDialog filechooser =
+                    new Gtk.FileChooserDialog("Choose a folder to save the map",
+                        parent,
+                        FileChooserAction.CreateFolder,
+                        "Cancel", ResponseType.Cancel,
+                        "Chose", ResponseType.Accept);
+
+                if (filechooser.Run() == (int)ResponseType.Accept)
+                {
+                    dir_save = filechooser.Filename;
+                }
+                else
+                {
+                    return "";
+                }
+
+                filechooser.Destroy();
+            } while (!Directory.Exists(dir_save));
+
+            return dir_save;
+        }
+
+        private static void packFiles(string from, string to, ManiaBeatmap sample)
+        {
+            string[] files = Directory.GetFiles(from, "*.qua");
+            foreach (string file in files) File.Delete(file);
+
+            ZipFile.CreateFromDirectory(from, to + "/" + $"{ sample.Title } - { sample.Artist }.osz");
         }
     }
 }
