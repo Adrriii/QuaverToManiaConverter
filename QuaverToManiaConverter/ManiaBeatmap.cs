@@ -45,7 +45,7 @@ namespace QuaverToManiaConverter
             writer.WriteLine("osu file format v14");
             writer.WriteLine("");
             writer.WriteLine("[General]");
-            writer.WriteLine($"AudioFileName: { AudioFileName }");
+            writer.WriteLine($"AudioFilename: { AudioFileName }");
             writer.WriteLine("AudioLeadIn: 0");
             writer.WriteLine($"PreviewTime: { PreviewTime }");
             writer.WriteLine("Countdown: 0");
@@ -82,9 +82,9 @@ namespace QuaverToManiaConverter
             writer.WriteLine("");
             writer.WriteLine("[Events]");
             writer.WriteLine("//Background and Video events");
-            if (BackgroundFile != null)
+            if (BackgroundFile != null && BackgroundFile != "")
             {
-                writer.WriteLine($"0,0,\"bg.png\",0,0: { BackgroundFile }");
+                writer.WriteLine($"0,0,\"{ BackgroundFile }\",0,0");
             }
             writer.WriteLine("");
             writer.WriteLine("[TimingPoints]");
@@ -129,7 +129,8 @@ namespace QuaverToManiaConverter
         
         override public string ToString()
         {
-            return $"{ x },{ y },{ time },{ (ln ? 128 : 1) },{ end_time }:0:0:0:";
+            string lnpart = ln ? (end_time + ":0") : "0";
+            return $"{ x },{ y },{ time },{ (ln ? 128 : 1) },0,"+ lnpart +":0:0:0:";
         }
     }
 
@@ -143,7 +144,7 @@ namespace QuaverToManiaConverter
         {
             this.time = time;
             this.val = val;
-            this.type = val >= 0 ? 0 : 1;
+            this.type = val >= 0 ? 1 : 0;
         }
 
         override public string ToString()
